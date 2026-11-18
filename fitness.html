@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fitness Tracker App</title>
+
+<style>
+
+body{
+font-family: Arial, sans-serif;
+background: linear-gradient(135deg,#4facfe,#00f2fe);
+display:flex;
+justify-content:center;
+padding:30px;
+}
+
+.container{
+background:white;
+width:700px;
+padding:25px;
+border-radius:15px;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h1{
+text-align:center;
+color:#333;
+}
+
+input{
+width:95%;
+padding:12px;
+margin:8px 0;
+border:1px solid #ccc;
+border-radius:6px;
+}
+
+button{
+background:#007bff;
+color:white;
+border:none;
+padding:12px;
+margin-top:10px;
+border-radius:6px;
+cursor:pointer;
+width:100%;
+}
+
+button:hover{
+background:#0056b3;
+}
+
+.card{
+background:#f8f9fa;
+padding:15px;
+margin-top:15px;
+border-radius:10px;
+}
+
+.progress{
+background:#ddd;
+height:25px;
+border-radius:20px;
+overflow:hidden;
+margin-top:15px;
+}
+
+.progress-bar{
+height:100%;
+width:0%;
+background:linear-gradient(to right,#28a745,#00c853);
+text-align:center;
+color:white;
+line-height:25px;
+font-weight:bold;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🏋️ Fitness Tracker</h1>
+
+<input type="text" id="activity" placeholder="Activity (Walking, Running etc)">
+
+<input type="number" id="minutes" placeholder="Minutes">
+
+<input type="number" id="calories" placeholder="Calories Burned">
+
+<button onclick="addActivity()">Add Activity</button>
+
+<div class="card">
+<h3>Today's Summary</h3>
+
+<p><b>Total Activities:</b> <span id="totalActivities">0</span></p>
+
+<p><b>Total Calories:</b> <span id="totalCalories">0</span></p>
+
+<p><b>Total Minutes:</b> <span id="totalMinutes">0</span></p>
+
+<div class="progress">
+<div class="progress-bar" id="progressBar">0%</div>
+</div>
+
+</div>
+
+<div class="card">
+<h3>Activity History</h3>
+<div id="history"></div>
+</div>
+
+</div>
+
+<script>
+
+let activities =
+JSON.parse(localStorage.getItem("activities")) || [];
+
+function updateUI(){
+
+let history=document.getElementById("history");
+
+history.innerHTML="";
+
+let totalCalories=0;
+let totalMinutes=0;
+
+activities.forEach(item=>{
+
+history.innerHTML += `
+<p>
+✅ ${item.activity}
+<br>
+Minutes: ${item.minutes}
+<br>
+Calories: ${item.calories}
+</p>
+<hr>
+`;
+
+totalCalories += Number(item.calories);
+totalMinutes += Number(item.minutes);
+
+});
+
+document.getElementById("totalActivities").innerText=activities.length;
+document.getElementById("totalCalories").innerText=totalCalories;
+document.getElementById("totalMinutes").innerText=totalMinutes;
+
+let percent=Math.min((totalMinutes/120)*100,100);
+
+document.getElementById("progressBar").style.width=percent+"%";
+document.getElementById("progressBar").innerText=Math.round(percent)+"%";
+
+}
+
+function addActivity(){
+
+let activity=document.getElementById("activity").value;
+let minutes=document.getElementById("minutes").value;
+let calories=document.getElementById("calories").value;
+
+if(activity==="" || minutes==="" || calories===""){
+alert("Please fill all fields");
+return;
+}
+
+activities.push({
+activity,
+minutes,
+calories
+});
+
+localStorage.setItem(
+"activities",
+JSON.stringify(activities)
+);
+
+document.getElementById("activity").value="";
+document.getElementById("minutes").value="";
+document.getElementById("calories").value="";
+
+updateUI();
+
+}
+
+updateUI();
+
+</script>
+
+</body>
+</html>
